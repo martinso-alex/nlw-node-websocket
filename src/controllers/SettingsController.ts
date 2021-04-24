@@ -15,6 +15,16 @@ class SettingsController {
       res.status(400).json({message: error.message})
     }
   }
+
+  async findByUsername (req: Request, res: Response) {
+    const { username } = req.params
+
+    const settingsService = new SettingsService()
+
+    const setting = await settingsService.findByUsername(username)
+
+    res.json(setting)
+  }
 }
 
 export { SettingsController }

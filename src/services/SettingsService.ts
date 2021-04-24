@@ -26,6 +26,10 @@ class SettingsService {
 
     return await this.settingsRepository.save(setting)
   }
+
+  async findByUsername (username: string) {
+    return await this.settingsRepository.findOne({ username })
+  }
 }
 
 export { SettingsService }
