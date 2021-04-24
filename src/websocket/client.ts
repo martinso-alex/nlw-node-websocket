@@ -14,8 +14,6 @@ const client = (io) => {
     const connectionsService = new ConnectionsService()
     
     socket.on('client_first_access', async params => {
-      console.log(params)
-
       const { text, email } = params as IParams
 
       let user = await usersService.findByEmail(email)
@@ -45,6 +43,32 @@ const client = (io) => {
       await messagesService.create({
         text: text,
         user_id: user.id
+      })
+
+      const allMessages = await messagesService.listByUser(user.id)
+
+      socket.emit('client_list_all_messages', allMessages)
+
+      const allUsers = await connectionsService.findAllWithoutAdmin()
+
+      io.emit('admin_list_all_users', allUsers)
+    })
+
+    socket.on('client_send_to_admin', async params => {
+      const { text, socket_id } = params
+
+      const { user_id, user } = await connectionsService.findBySocketId(socket.id)
+
+      const message = await messagesService.create({
+        text,
+        user_id
+      })
+
+      io.to(socket_id).emit('admin_receive_message', {
+        message: message,
+        socket_id: socket.id,
+        user_id: user_id,
+        email: user.email
       })
     })
   })

@@ -4,6 +4,7 @@ import { Server, Socket } from 'socket.io'
 import path from 'path'
 
 import { client } from './websocket/client'
+import { admin } from './websocket/admin'
 
 import './database'
 import { routes } from './routes'
@@ -19,6 +20,7 @@ app.engine("html", require('ejs').renderFile)
 app.set('view engine', 'html')
 
 app.get('/pages/client', (req, res) => res.render('html/client.html'))
+app.get('/pages/admin', (req, res) => res.render('html/admin.html'))
 
 const http = createServer(app)
 const io = new Server(http)
@@ -28,5 +30,6 @@ io.on('connection', (socket: Socket) => {
 })
 
 client(io)
+admin(io)
 
 http.listen(3333, () => console.log('server is running on port 3333'))

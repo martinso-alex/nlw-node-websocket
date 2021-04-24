@@ -30,6 +30,17 @@ class ConnectionsService {
   async findByUserId(user_id: string) {
     return await this.connectionsRepository.findOne({ user_id })
   }
+
+  async findAllWithoutAdmin () {
+    return await this.connectionsRepository.find({
+      where: {admin_id: null},
+      relations: ['user']
+    })
+  }
+
+  async findBySocketId (socket_id: string) {
+    return await this.connectionsRepository.findOne({ socket_id }, { relations: ['user'] })
+  }
 }
 
 export { ConnectionsService }
